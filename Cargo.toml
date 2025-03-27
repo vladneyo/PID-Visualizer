@@ -1,0 +1,8 @@
+[package]
+name = "PIDVisualizer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plotters = "0.3" # for visualization
+anyhow = "1.0"   # easy error handling
