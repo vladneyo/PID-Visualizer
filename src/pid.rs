@@ -1,6 +1,7 @@
-use std::io;
 use crate::console_input::ConsoleInput;
+use std::io;
 
+#[derive(Debug)]
 pub struct PID {
     pub kp: f64,     // Proportional gain
     pub ki: f64,     // Integral gain
@@ -12,7 +13,9 @@ pub struct PID {
 impl PID {
     pub fn new(kp: f64, ki: f64, kd: f64) -> Self {
         Self {
-            kp, ki, kd,
+            kp,
+            ki,
+            kd,
             integral: 0.0,
             prev_error: 0.0,
         }
@@ -32,14 +35,15 @@ impl PID {
 }
 
 impl ConsoleInput for PID {
-    fn type_in() -> PID{
+    fn type_in() -> PID {
         println!("Type P value");
-
         let mut p_value_s = String::new();
         io::stdin()
             .read_line(&mut p_value_s)
             .expect("Failed to read P value.");
-        let p_value = p_value_s.trim().parse()
+        let p_value = p_value_s
+            .trim()
+            .parse()
             .expect("Please enter a valid float number.");
 
         println!("Type I value");
@@ -47,7 +51,9 @@ impl ConsoleInput for PID {
         io::stdin()
             .read_line(&mut i_value_s)
             .expect("Failed to read I value.");
-        let i_value = i_value_s.trim().parse()
+        let i_value = i_value_s
+            .trim()
+            .parse()
             .expect("Please enter a valid float number.");
 
         println!("Type D value");
@@ -55,9 +61,11 @@ impl ConsoleInput for PID {
         io::stdin()
             .read_line(&mut d_value_s)
             .expect("Failed to read D value.");
-        let d_value = d_value_s.trim().parse()
+        let d_value = d_value_s
+            .trim()
+            .parse()
             .expect("Please enter a valid float number.");
 
-        crate::pid::PID::new(p_value, i_value, d_value)
+        PID::new(p_value, i_value, d_value)
     }
 }
