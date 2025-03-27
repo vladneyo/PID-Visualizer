@@ -9,12 +9,12 @@ use crate::visualizer::VisualizerConfig;
 
 fn main() -> anyhow::Result<()> {
     let input = Input::set(1.5, 1.0);//ingest();
-    let mut pid = PID::new(25.0, 0.0, 0.8);//ingest();
+    let mut pid = PID::new(10.0, 0.0, 0.0);//ingest();
 
     // TODO: try different init setup, investigate, make configurable
     let mut measurement = 0.0; // Initial value
     let dt = 0.01; // Time step
-    let sim_time = 15.0; // Total simulation time
+    let sim_time = 5.0; // Total simulation time
 
     let mut plot_data = vec![];
 
@@ -24,9 +24,11 @@ fn main() -> anyhow::Result<()> {
 
         // TODO: replace with inertia, mass-damping and noise modelling
         measurement += control * dt;
-        // println!("{}", measurement);
+
         plot_data.push((step as f64 * dt, measurement));
     }
+
+    println!("{:#?}", plot_data.iter().map(|(t, v)| v.to_string()).collect::<Vec<_>>().join(", "));
 
     // Visualize the result
     let v = Visualizer::new(VisualizerConfig::new("PID".to_string(), "pid_response.png".to_string(), 1000, 800));

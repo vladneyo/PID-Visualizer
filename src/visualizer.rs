@@ -40,13 +40,7 @@ impl Visualizer {
 
         chart.configure_mesh().draw()?;
 
-        // Your main line series
-        let data = (0..data.len()).map(|x| {
-            let x = x as f64 * 0.01;
-            (x, (1.0 - (-x).exp())) // example data
-        });
-
-        chart.draw_series(LineSeries::new(data, &BLUE))?;
+        chart.draw_series(LineSeries::new(data.iter().copied(), &BLUE))?;
 
         // Highlight a target value explicitly:
         let target_point = (target.acceptable_time, target.target_value);
