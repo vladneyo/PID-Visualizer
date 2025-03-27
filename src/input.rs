@@ -1,4 +1,5 @@
 use std::io;
+use crate::console_input::ConsoleInput;
 
 pub struct Input{
     pub target_value: f64,
@@ -9,8 +10,10 @@ impl Input{
     pub fn set(value: f64, time: f64) -> Input{
         Self{ target_value: value, acceptable_time: time}
     }
+}
 
-    pub fn ingest() -> Self{
+impl ConsoleInput for Input{
+    fn type_in() -> Input{
         println!("Enter your Target Value:");
 
         let mut value = String::new();

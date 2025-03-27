@@ -1,4 +1,5 @@
 use std::io;
+use crate::console_input::ConsoleInput;
 
 pub struct PID {
     pub kp: f64,     // Proportional gain
@@ -17,7 +18,21 @@ impl PID {
         }
     }
 
-    pub fn ingest() -> Self{
+    pub fn update(&mut self, target_point: f64, measurement: f64, dt: f64) -> f64 {
+        let error = target_point - measurement;
+        // integrate errors over time
+        self.integral += error * dt;
+        // speed of error changes
+        let derivative = (error - self.prev_error) / dt;
+        self.prev_error = error;
+
+        // PID formula
+        self.kp * error + self.ki * self.integral + self.kd * derivative
+    }
+}
+
+impl ConsoleInput for PID {
+    fn type_in() -> PID{
         println!("Type P value");
 
         let mut p_value_s = String::new();
@@ -43,18 +58,6 @@ impl PID {
         let d_value = d_value_s.trim().parse()
             .expect("Please enter a valid float number.");
 
-        PID::new(p_value, i_value, d_value)
-    }
-
-    pub fn update(&mut self, target_point: f64, measurement: f64, dt: f64) -> f64 {
-        let error = target_point - measurement;
-        // integrate errors over time
-        self.integral += error * dt;
-        // speed of error changes
-        let derivative = (error - self.prev_error) / dt;
-        self.prev_error = error;
-
-        // PID formula
-        self.kp * error + self.ki * self.integral + self.kd * derivative
+        crate::pid::PID::new(p_value, i_value, d_value)
     }
 }
