@@ -12,6 +12,7 @@ dependencies = [
  "anyhow",
  "plotters",
  "serde",
+ "serde_json",
  "strum",
  "strum_macros",
 ]

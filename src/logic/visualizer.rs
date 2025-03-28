@@ -98,6 +98,18 @@ impl Visualizer {
             },
         ))?;
 
+        // Draw a dashed horizontal line at the target value.
+        chart.draw_series(DashedLineSeries::new(
+            vec![(0.0, target.target_value), (max_x, target.target_value)],
+            30,
+            20,
+            ShapeStyle {
+                color: RED.into(),
+                filled: false,
+                stroke_width: 3,
+            },
+        ))?;
+
         // Highlight a target value explicitly:
         let target_point = (target.acceptable_time, target.target_value);
 

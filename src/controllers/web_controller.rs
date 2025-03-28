@@ -6,6 +6,7 @@ use crate::logic::pid::PID;
 use actix_files::NamedFile;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -31,9 +32,20 @@ pub async fn update_input(input: web::Json<InputModel>) -> impl Responder {
     let pid = PID::new(input.pid.kp, input.pid.ki, input.pid.kd);
     let phx = Physics::cetus_pro(3.0, 0.0007);
 
-    // logic here
     match PIDController::update(target, pid, phx) {
-        Some(result) => HttpResponse::Ok().json(input.into_inner()),
+        Some(_result) => {
+            // Persist the input into a JSON file.
+            let file_path = "./user_defaults.json";
+            match serde_json::to_string(&input.into_inner()) {
+                Ok(json_str) => {
+                    if let Err(e) = fs::write(file_path, json_str) {
+                        println!("Error writing defaults to file: {}", e);
+                    }
+                }
+                Err(e) => println!("Error serializing input: {}", e),
+            }
+            HttpResponse::Ok().json("Success")
+        }
         None => HttpResponse::InternalServerError().json("Something went wrong"),
     }
 }
@@ -44,6 +56,15 @@ pub async fn get_image() -> actix_web::Result<NamedFile> {
 }
 
 pub async fn get_defaults() -> impl Responder {
+    let file_path = "./user_defaults.json";
+    if let Ok(data) = fs::read_to_string(file_path) {
+        if let Ok(default) = serde_json::from_str::<InputModel>(&data) {
+            return HttpResponse::Ok().json(default);
+        } else {
+            println!("Error deserializing defaults from file.");
+        }
+    }
+
     let d_input = Input::default();
     let d_pid = PID::default();
     let d_drone = CetusPro;
