@@ -1,1 +1,1 @@
-{"target":1.0,"timeResponse":0.5,"pid":{"kp":3.0,"ki":17.0,"kd":0.2},"droneModel":"cetus_pro"}
+{"target":1.0,"timeResponse":0.5,"pid":{"kp":0.4,"ki":5.3,"kd":0.04},"droneModel":"cetus_pro"}

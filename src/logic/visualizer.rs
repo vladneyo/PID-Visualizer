@@ -115,14 +115,14 @@ impl Visualizer {
 
         chart.draw_series(PointSeries::of_element(
             [target_point],
-            5, // Size of the marker
+            10, // Size of the marker
             &RED,
             &|c, s, st| {
                 return EmptyElement::at(c)
                     + Circle::new((0, 0), s, st.filled())
                     + Text::new(
                         "Target",
-                        (10, -10),
+                        (20, -30),
                         (*&self.config.font_family.as_str(), *&self.config.font_size)
                             .into_font()
                             .color(&BLACK),
