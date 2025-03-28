@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Physics {
     pub sim_time: f64,
     pub tau_motor: f64,

@@ -3,7 +3,7 @@ use crate::math_utils::MathUtils;
 use plotters::prelude::*;
 use plotters::style::full_palette::GREY_A200;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct VisualizerConfig {
     pub caption: String,
     pub output_path: String,

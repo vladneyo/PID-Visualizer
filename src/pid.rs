@@ -1,7 +1,7 @@
 use crate::console_input::ConsoleInput;
 use std::io;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct PID {
     pub kp: f64,     // Proportional gain
     pub ki: f64,     // Integral gain
