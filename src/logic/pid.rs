@@ -11,6 +11,15 @@ pub struct PID {
 }
 
 impl PID {
+    pub fn default() -> PID {
+        PID {
+            kp: 2.0,
+            ki: 2.0,
+            kd: 0.01,
+            integral: 0.0,
+            prev_error: 0.0,
+        }
+    }
     pub fn new(kp: f64, ki: f64, kd: f64) -> Self {
         Self {
             kp,

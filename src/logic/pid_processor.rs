@@ -1,6 +1,6 @@
-use crate::input::Input;
-use crate::physics::Physics;
-use crate::pid::PID;
+use crate::logic::input::Input;
+use crate::logic::physics::Physics;
+use crate::logic::pid::PID;
 
 pub struct PIDProcessor {
     pub measurement: f64, // init position

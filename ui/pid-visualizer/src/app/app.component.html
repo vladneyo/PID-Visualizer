@@ -1,36 +1,43 @@
 <div class="container">
   <h1>Drone PID Simulation</h1>
-  <form (ngSubmit)="onSettingsChanged()" #pidForm="ngForm">
-    <!-- Form fields wrapped in <div> for styling -->
+
+  <!-- Remove the submit button if not needed -->
+  <form>
     <div>
       <label for="target">Target Value:</label>
-      <input type="number" id="target" name="target" [(ngModel)]="inputModel.target" required>
+      <input type="number" id="target" name="target" [(ngModel)]="inputModel.target" step="0.1"
+        (ngModelChange)="onSettingsChanged()" required>
     </div>
     <div>
       <label for="timeResponse">Time Response:</label>
-      <input type="number" id="timeResponse" name="timeResponse" [(ngModel)]="inputModel.timeResponse" required>
+      <input type="number" id="timeResponse" name="timeResponse" [(ngModel)]="inputModel.timeResponse" step="0.1"
+        (ngModelChange)="onSettingsChanged()" required>
     </div>
     <div>
       <label for="kp">Kp:</label>
-      <input type="number" id="kp" name="kp" [(ngModel)]="inputModel.pid.kp" required>
+      <input type="number" id="kp" name="kp" [(ngModel)]="inputModel.pid.kp" (ngModelChange)="onSettingsChanged()"
+        step="0.1" required>
     </div>
     <div>
       <label for="ki">Ki:</label>
-      <input type="number" id="ki" name="ki" [(ngModel)]="inputModel.pid.ki" required>
+      <input type="number" id="ki" name="ki" [(ngModel)]="inputModel.pid.ki" (ngModelChange)="onSettingsChanged()"
+        step="0.1" required>
     </div>
     <div>
       <label for="kd">Kd:</label>
-      <input type="number" id="kd" name="kd" [(ngModel)]="inputModel.pid.kd" required>
+      <input type="number" id="kd" name="kd" [(ngModel)]="inputModel.pid.kd" (ngModelChange)="onSettingsChanged()"
+        step="0.001" required>
     </div>
     <div>
       <label for="droneModel">Drone Model:</label>
-      <select id="droneModel" name="droneModel" [(ngModel)]="inputModel.droneModel" required>
+      <select id="droneModel" name="droneModel" [(ngModel)]="inputModel.droneModel"
+        (ngModelChange)="onSettingsChanged()" required>
         <option value="cetus_pro">BetaFPV Cetus Pro</option>
-        <!-- Add more options as needed -->
+        <!-- Additional options here -->
       </select>
     </div>
-    <button type="submit">Update Simulation</button>
   </form>
+
   <div class="image-container">
     <h2>PID Response</h2>
     <img [src]="imageUrl" alt="PID Response">

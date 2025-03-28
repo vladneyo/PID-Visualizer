@@ -1,5 +1,5 @@
-use crate::input::Input;
-use crate::math_utils::MathUtils;
+use crate::logic::input::Input;
+use crate::utils::math_utils::MathUtils;
 use plotters::prelude::*;
 use plotters::style::full_palette::GREY_A200;
 

@@ -1,17 +1,13 @@
 mod console_input;
-mod input;
-mod math_utils;
-mod physics;
-mod pid;
-mod pid_processor;
-mod visualizer;
-mod web_controller;
+mod controllers;
+mod logic;
+mod utils;
 
-use crate::web_controller::{get_image, update_input};
 use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::http::header;
 use actix_web::{web, App, HttpServer};
+use controllers::web_controller::{get_defaults, get_image, update_input};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -28,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             )
             .route("/api/input", web::post().to(update_input))
             .route("/api/image", web::get().to(get_image))
+            .route("/api/defaults", web::get().to(get_defaults))
             // Serve image and other endpoints as needed
             .service(Files::new("/", ui_path).index_file("index.html"))
     })
