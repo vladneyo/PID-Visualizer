@@ -3,7 +3,8 @@ use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct InputModel {
+#[serde(rename_all = "camelCase")]
+pub struct InputModel {
     target: f64,
     time_response: f64,
     pid: PIDParams,
@@ -11,7 +12,8 @@ struct InputModel {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct PIDParams {
+#[serde(rename_all = "camelCase")]
+pub struct PIDParams {
     kp: f64,
     ki: f64,
     kd: f64,
@@ -20,11 +22,7 @@ struct PIDParams {
 // Endpoint to update simulation settings.
 pub async fn update_input(input: web::Json<InputModel>) -> impl Responder {
     println!("Received input: {:?}", input);
-
-    // Here you would update your simulation logic with the new settings,
-    // run the simulation, and render the new "pid_response.png".
-
-    // For now, we simply echo back the received input.
+    // logic here
     HttpResponse::Ok().json(input.into_inner())
 }
 
