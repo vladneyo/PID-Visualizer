@@ -11,23 +11,42 @@ pub struct PIDProcessor {
     pub phx: Physics,
 }
 
-impl PIDProcessor {
-    pub fn new(
-        measurement: f64,
-        motor_output: f64,
-        k: f64,
-        dt: f64,
-        pid: PID,
-        phx: Physics,
-    ) -> Self {
+impl Default for PIDProcessor {
+    fn default() -> Self {
         Self {
-            measurement,
-            motor_output,
-            k,
-            dt,
-            pid,
-            phx,
+            measurement: 0.0,
+            motor_output: 0.0,
+            k: 1.0,
+            dt: 0.01,
+            pid: PID::default(),
+            phx: Physics::default(),
         }
+    }
+}
+impl PIDProcessor {
+    pub fn motor_output(mut self, value: f64) -> Self {
+        self.motor_output = value;
+        self
+    }
+
+    pub fn starting_position(mut self, value: f64) -> Self {
+        self.measurement = value;
+        self
+    }
+
+    pub fn time_resolution(mut self, value: f64) -> Self {
+        self.dt = value;
+        self
+    }
+
+    pub fn pid(mut self, value: PID) -> Self {
+        self.pid = value;
+        self
+    }
+
+    pub fn phx(mut self, value: Physics) -> Self {
+        self.phx = value;
+        self
     }
 
     pub fn process(&mut self, input: &Input) -> Vec<(f64, f64)> {

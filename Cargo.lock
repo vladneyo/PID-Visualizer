@@ -15,6 +15,7 @@ dependencies = [
  "serde_json",
  "strum",
  "strum_macros",
+ "timetrap",
 ]
 
 [[package]]
@@ -1791,6 +1792,12 @@ dependencies = [
  "num-conv",
  "time-core",
 ]
+
+[[package]]
+name = "timetrap"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38a7a96c0be28e93c0ecca8bd54136d75bbf3d3578d9dd374aa01bbba1fda8f9"
 
 [[package]]
 name = "tinystr"

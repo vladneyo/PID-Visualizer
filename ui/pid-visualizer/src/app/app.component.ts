@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../environments/environment';
 import { firstValueFrom, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface PIDParams {
   kp: number;
@@ -33,7 +34,11 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   async ngOnInit(): Promise<void> {
-    const defaults = await firstValueFrom(this.http.get<InputModel>(`${environment.apiUrl}/api/defaults`));
+    console.log('ngOnInit called');
+    const defaults = await firstValueFrom(this.http.get<InputModel>(`${environment.apiUrl}/api/defaults`)
+      // .pipe(takeUntilDestroyed())
+    );
+    console.log(defaults);
     this.inputModel = {
       target: defaults.target,
       timeResponse: defaults.timeResponse,
@@ -42,9 +47,10 @@ export class AppComponent implements OnInit {
     };
 
     this.updateSubject.pipe(
-      debounceTime(500)
+      debounceTime(250)
     ).subscribe(() => {
       this.http.post(`${environment.apiUrl}/api/input`, this.inputModel)
+        // .pipe(takeUntilDestroyed())
         .subscribe(() => {
           this.imageUrl = `${environment.apiUrl}/api/image?t=${new Date().getTime()}`;
         });

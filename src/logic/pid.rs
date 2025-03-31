@@ -6,10 +6,9 @@ pub struct PID {
     integral: f64,   // Integral accumulator
     prev_error: f64, // Previous error for derivative calculation
 }
-
-impl PID {
-    pub fn default() -> PID {
-        PID {
+impl Default for PID {
+    fn default() -> Self {
+        Self {
             kp: 2.0,
             ki: 2.0,
             kd: 0.01,
@@ -17,6 +16,9 @@ impl PID {
             prev_error: 0.0,
         }
     }
+}
+
+impl PID {
     pub fn new(kp: f64, ki: f64, kd: f64) -> Self {
         Self {
             kp,

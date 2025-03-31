@@ -7,6 +7,7 @@ use actix_files::NamedFile;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use std::fs;
+use timetrap::trap;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -25,7 +26,6 @@ pub struct PIDParams {
     kd: f64,
 }
 
-// Endpoint to update simulation settings.
 pub async fn update_input(input: web::Json<InputModel>) -> impl Responder {
     println!("Received input: {:?}", input);
     let target = Input::set(input.target, input.time_response);
@@ -36,47 +36,53 @@ pub async fn update_input(input: web::Json<InputModel>) -> impl Responder {
         Some(_result) => {
             // Persist the input into a JSON file.
             let file_path = "./user_defaults.json";
-            match serde_json::to_string(&input.into_inner()) {
-                Ok(json_str) => {
-                    if let Err(e) = fs::write(file_path, json_str) {
-                        println!("Error writing defaults to file: {}", e);
+            trap!("write to user_defaults.json", {
+                match serde_json::to_string(&input.into_inner()) {
+                    Ok(json_str) => {
+                        if let Err(e) = fs::write(file_path, json_str) {
+                            println!("Error writing defaults to file: {}", e);
+                        }
                     }
+                    Err(e) => println!("Error serializing input: {}", e),
                 }
-                Err(e) => println!("Error serializing input: {}", e),
-            }
+            });
+
             HttpResponse::Ok().json("Success")
         }
         None => HttpResponse::InternalServerError().json("Something went wrong"),
     }
 }
 
-// Endpoint to serve the generated image.
 pub async fn get_image() -> actix_web::Result<NamedFile> {
     NamedFile::open("./pid_response.png").map_err(actix_web::error::ErrorInternalServerError)
 }
 
 pub async fn get_defaults() -> impl Responder {
-    let file_path = "./user_defaults.json";
-    if let Ok(data) = fs::read_to_string(file_path) {
-        if let Ok(default) = serde_json::from_str::<InputModel>(&data) {
-            return HttpResponse::Ok().json(default);
-        } else {
-            println!("Error deserializing defaults from file.");
+    trap!("get_defaults", {
+        println!("{:?}", "get_defaults called");
+        let file_path = "./user_defaults.json";
+        if let Ok(data) = fs::read_to_string(file_path) {
+            if let Ok(default) = serde_json::from_str::<InputModel>(&data) {
+                println!("default {:?}", default);
+                return HttpResponse::Ok().json(default);
+            } else {
+                println!("Error deserializing defaults from file.");
+            }
         }
-    }
 
-    let d_input = Input::default();
-    let d_pid = PID::default();
-    let d_drone = CetusPro;
-    let default: InputModel = InputModel {
-        target: d_input.target_value,
-        time_response: d_input.acceptable_time,
-        pid: PIDParams {
-            kp: d_pid.kp,
-            ki: d_pid.ki,
-            kd: d_pid.kd,
-        },
-        drone_model: d_drone.to_string(),
-    };
-    HttpResponse::Ok().json(default)
+        let d_input = Input::default();
+        let d_pid = PID::default();
+        let d_drone = CetusPro;
+        let default: InputModel = InputModel {
+            target: d_input.target_value,
+            time_response: d_input.acceptable_time,
+            pid: PIDParams {
+                kp: d_pid.kp,
+                ki: d_pid.ki,
+                kd: d_pid.kd,
+            },
+            drone_model: d_drone.to_string(),
+        };
+        HttpResponse::Ok().json(default)
+    })
 }

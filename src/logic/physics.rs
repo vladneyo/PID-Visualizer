@@ -4,6 +4,15 @@ pub struct Physics {
     pub tau_motor: f64,
     pub tau_inertia: f64,
 }
+impl Default for Physics {
+    fn default() -> Self {
+        Self {
+            sim_time: 0.3,
+            tau_motor: 0.1,
+            tau_inertia: 0.01,
+        }
+    }
+}
 // TODO: implement vibrations on rapid change and gyro noise
 impl Physics {
     pub fn new(sim_time: f64, tau_motor: f64, inertia: f64, effective_damping: f64) -> Self {
