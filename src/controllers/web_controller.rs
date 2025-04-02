@@ -7,14 +7,16 @@ use actix_files::NamedFile;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use timetrap::trap;
+use timetrap::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct InputModel {
+    pub time_window: f64,
     pub target: f64,
     pub time_response: f64,
     pub pid: PIDParams,
+    pub effective_damping: f64,
     pub drone_model: String,
 }
 
@@ -27,30 +29,31 @@ pub struct PIDParams {
 }
 
 pub async fn update_input(input: web::Json<InputModel>) -> impl Responder {
-    println!("Received input: {:?}", input);
-    let target = Input::set(input.target, input.time_response);
-    let pid = PID::new(input.pid.kp, input.pid.ki, input.pid.kd);
-    let phx = Physics::cetus_pro(3.0, 0.0007);
+    trap_mem!("update_input", MemUnits::Kb, {
+        let target = Input::set(input.target, input.time_response);
+        let pid = PID::new(input.pid.kp, input.pid.ki, input.pid.kd);
+        let phx = Physics::cetus_pro(input.time_window, input.effective_damping);
 
-    match PIDController::update(target, pid, phx) {
-        Some(_result) => {
-            // Persist the input into a JSON file.
-            let file_path = "./user_defaults.json";
-            trap!("write to user_defaults.json", {
-                match serde_json::to_string(&input.into_inner()) {
-                    Ok(json_str) => {
-                        if let Err(e) = fs::write(file_path, json_str) {
-                            println!("Error writing defaults to file: {}", e);
+        match PIDController::update(target, pid, phx) {
+            Some(_result) => {
+                // Persist the input into a JSON file.
+                let file_path = "./user_defaults.json";
+                trap!("write to user_defaults.json", {
+                    match serde_json::to_string(&input.into_inner()) {
+                        Ok(json_str) => {
+                            if let Err(e) = fs::write(file_path, json_str) {
+                                println!("Error writing defaults to file: {}", e);
+                            }
                         }
+                        Err(e) => println!("Error serializing input: {}", e),
                     }
-                    Err(e) => println!("Error serializing input: {}", e),
-                }
-            });
+                });
 
-            HttpResponse::Ok().json("Success")
+                HttpResponse::Ok().json("Success")
+            }
+            None => HttpResponse::InternalServerError().json("Something went wrong"),
         }
-        None => HttpResponse::InternalServerError().json("Something went wrong"),
-    }
+    })
 }
 
 pub async fn get_image() -> actix_web::Result<NamedFile> {
@@ -74,6 +77,7 @@ pub async fn get_defaults() -> impl Responder {
         let d_pid = PID::default();
         let d_drone = CetusPro;
         let default: InputModel = InputModel {
+            time_window: Physics::default().sim_time,
             target: d_input.target_value,
             time_response: d_input.acceptable_time,
             pid: PIDParams {
@@ -81,6 +85,7 @@ pub async fn get_defaults() -> impl Responder {
                 ki: d_pid.ki,
                 kd: d_pid.kd,
             },
+            effective_damping: 0.0004,
             drone_model: d_drone.to_string(),
         };
         HttpResponse::Ok().json(default)

@@ -3,7 +3,7 @@ use crate::logic::physics::Physics;
 use crate::logic::pid::PID;
 use crate::logic::pid_processor::PIDProcessor;
 use crate::logic::visualizer::{Visualizer, VisualizerConfig};
-use timetrap::trap;
+use timetrap::*;
 
 pub struct PIDController {}
 impl PIDController {
@@ -21,17 +21,17 @@ impl PIDController {
         let mut pid_processor = PIDProcessor::default()
             .starting_position(0.0)
             .motor_output(0.0)
-            .time_resolution(0.01)
+            .time_resolution(0.001)
             .pid(pid)
             .phx(phx);
 
-        let plot_data: Vec<(f64, f64)>;
+        let mut plot_data: Vec<(f64, f64)> = vec![];
 
         trap!("pid_processor.process()", {
             plot_data = pid_processor.process(&input);
         });
 
-        trap!("plot_response", {
+        trap_mem!("visualizer.plot_response", MemUnits::Kb, {
             Some(visualizer.plot_response(&input, &plot_data, &phx.sim_time))
         })
     }

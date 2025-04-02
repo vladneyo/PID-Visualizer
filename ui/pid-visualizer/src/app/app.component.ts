@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../environments/environment';
@@ -13,9 +13,11 @@ interface PIDParams {
 }
 
 interface InputModel {
+  timeWindow: number;
   target: number;
   timeResponse: number;
   pid: PIDParams;
+  effectiveDamping: number;
   droneModel: string;
 }
 
@@ -26,12 +28,15 @@ interface InputModel {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   inputModel!: InputModel;
   imageUrl = `${environment.apiUrl}/api/image`;
   private updateSubject = new Subject<void>();
 
   constructor(private http: HttpClient) { }
+  ngOnDestroy(): void {
+    this.updateSubject.unsubscribe();
+  }
 
   async ngOnInit(): Promise<void> {
     console.log('ngOnInit called');
@@ -42,7 +47,9 @@ export class AppComponent implements OnInit {
     this.inputModel = {
       target: defaults.target,
       timeResponse: defaults.timeResponse,
+      timeWindow: defaults.timeWindow,
       pid: defaults.pid,
+      effectiveDamping: defaults.effectiveDamping,
       droneModel: defaults.droneModel,
     };
 

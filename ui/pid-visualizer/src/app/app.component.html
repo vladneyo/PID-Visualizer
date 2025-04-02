@@ -4,29 +4,39 @@
   <!-- Remove the submit button if not needed -->
   <form>
     <div>
+      <label for="timeWindow">Time Window Measured (sec):</label>
+      <input type="number" id="timeWindow" name="timeWindow" [(ngModel)]="inputModel.timeWindow" step="0.01"
+        (ngModelChange)="onSettingsChanged()" required>
+    </div>
+    <div>
       <label for="target">Target Value:</label>
       <input type="number" id="target" name="target" [(ngModel)]="inputModel.target" step="0.1"
         (ngModelChange)="onSettingsChanged()" required>
     </div>
     <div>
-      <label for="timeResponse">Time Response:</label>
-      <input type="number" id="timeResponse" name="timeResponse" [(ngModel)]="inputModel.timeResponse" step="0.1"
+      <label for="timeResponse">Time Response (sec):</label>
+      <input type="number" id="timeResponse" name="timeResponse" [(ngModel)]="inputModel.timeResponse" step="0.01"
         (ngModelChange)="onSettingsChanged()" required>
     </div>
     <div>
       <label for="kp">Kp:</label>
       <input type="number" id="kp" name="kp" [(ngModel)]="inputModel.pid.kp" (ngModelChange)="onSettingsChanged()"
-        step="0.1" required>
+        step="0.01" required>
     </div>
     <div>
       <label for="ki">Ki:</label>
       <input type="number" id="ki" name="ki" [(ngModel)]="inputModel.pid.ki" (ngModelChange)="onSettingsChanged()"
-        step="0.1" required>
+        step="0.01" required>
     </div>
     <div>
       <label for="kd">Kd:</label>
       <input type="number" id="kd" name="kd" [(ngModel)]="inputModel.pid.kd" (ngModelChange)="onSettingsChanged()"
-        step="0.001" required>
+        step="0.01" required>
+    </div>
+    <div>
+      <label for="effectiveDamping">Effective Damping:</label>
+      <input type="number" id="effectiveDamping" name="effectiveDamping" [(ngModel)]="inputModel.effectiveDamping"
+        (ngModelChange)="onSettingsChanged()" step="0.0001" required>
     </div>
     <div>
       <label for="droneModel">Drone Model:</label>

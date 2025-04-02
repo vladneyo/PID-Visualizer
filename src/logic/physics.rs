@@ -25,7 +25,7 @@ impl Physics {
     }
 
     pub fn cetus_pro(sim_time: f64, effective_damping: f64) -> Self {
-        let inertia = Self::cetus_real_inertia();
+        let inertia = Self::cetus_real_inertia() * 3 as f64;
         let tau_motor = 0.05; // PID-to-motor
         Self::new(sim_time, tau_motor, inertia, effective_damping)
     }
